@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DataMapPlot Examples</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Marcellus+SC&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050505;
+        --panel: #050505bb;
+        --panel-solid: #0d0d0fee;
+        --text: #f6f1e8;
+        --muted: #aaa8a3;
+        --line: #ffffff22;
+        --line-strong: #ffffff36;
+        --gold: #d8bc75;
+        --blue: #78b7ff;
+        --green: #78d6b3;
+        --rose: #e68aa7;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-height: 100%;
+        background: var(--bg);
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Georgia, "Times New Roman", serif;
+        letter-spacing: 0;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      #map-field {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        background: #050505;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 40px;
+      }
+
+      .hero {
+        width: min(780px, 100%);
+        padding: 18px 20px 20px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+        box-shadow: 2px 3px 18px #00000066;
+        backdrop-filter: blur(6px);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-family: "Marcellus SC", "Cinzel", Georgia, serif;
+        font-size: clamp(2.3rem, 7vw, 5.5rem);
+        font-weight: 400;
+        line-height: 0.95;
+        text-wrap: balance;
+      }
+
+      .subtitle {
+        max-width: 650px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: clamp(1rem, 2vw, 1.25rem);
+        line-height: 1.45;
+      }
+
+      .meta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 5px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #ffffff0f;
+        color: #e9e0cb;
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 0.78rem;
+        line-height: 1;
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin: 28px 0 12px;
+      }
+
+      h2 {
+        font-family: "Marcellus SC", "Cinzel", Georgia, serif;
+        font-size: clamp(1.45rem, 3vw, 2.1rem);
+        font-weight: 400;
+      }
+
+      .section-note {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 14px;
+      }
+
+      .example-card {
+        position: relative;
+        display: flex;
+        min-height: 218px;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+        box-shadow: 2px 3px 14px #00000055;
+        text-decoration: none;
+        backdrop-filter: blur(6px);
+        transition:
+          transform 160ms ease,
+          border-color 160ms ease,
+          background-color 160ms ease;
+      }
+
+      .example-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0.16;
+        background:
+          radial-gradient(circle at 20% 24%, var(--accent), transparent 22%),
+          radial-gradient(circle at 76% 68%, var(--accent-soft), transparent 28%);
+        pointer-events: none;
+      }
+
+      .example-card:hover,
+      .example-card:focus-visible {
+        transform: translateY(-2px);
+        border-color: var(--line-strong);
+        background: var(--panel-solid);
+        outline: none;
+      }
+
+      .card-top,
+      .card-bottom {
+        position: relative;
+        z-index: 1;
+      }
+
+      .type {
+        display: inline-flex;
+        margin-bottom: 12px;
+        color: var(--accent);
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+      }
+
+      h3 {
+        font-family: "Marcellus SC", "Cinzel", Georgia, serif;
+        font-size: 1.55rem;
+        font-weight: 400;
+        line-height: 1.05;
+      }
+
+      .description {
+        margin-top: 10px;
+        color: #d7d0c4;
+        font-size: 1rem;
+        line-height: 1.38;
+      }
+
+      .open {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 18px;
+        color: #f6ecd6;
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 0.86rem;
+      }
+
+      .open::after {
+        content: ">";
+        color: var(--accent);
+      }
+
+      .card-link {
+        color: var(--muted);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.78rem;
+        overflow-wrap: anywhere;
+      }
+
+      .accent-blue {
+        --accent: var(--blue);
+        --accent-soft: #78b7ff;
+      }
+
+      .accent-gold {
+        --accent: var(--gold);
+        --accent-soft: #d8bc75;
+      }
+
+      .accent-green {
+        --accent: var(--green);
+        --accent-soft: #78d6b3;
+      }
+
+      .accent-rose {
+        --accent: var(--rose);
+        --accent-soft: #e68aa7;
+      }
+
+      .repo-footer {
+        margin-top: 28px;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+        color: var(--muted);
+        line-height: 1.45;
+        backdrop-filter: blur(6px);
+      }
+
+      .repo-footer a {
+        color: #f6ecd6;
+      }
+
+      @media (max-width: 700px) {
+        .page {
+          width: min(100% - 20px, 1180px);
+          padding-top: 10px;
+        }
+
+        .hero,
+        .example-card,
+        .repo-footer {
+          border-radius: 12px;
+        }
+
+        .section-heading {
+          display: block;
+        }
+
+        .section-note {
+          margin-top: 4px;
+        }
+
+        .example-card {
+          min-height: 190px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="map-field" aria-hidden="true"></canvas>
+
+    <main class="page">
+      <section class="hero" aria-labelledby="page-title">
+        <h1 id="page-title">DataMapPlot Examples</h1>
+        <p class="subtitle">
+          A small atlas of hosted data map plots, from arXiv papers and
+          Wikipedia articles to Hacker News posts and research impact maps.
+        </p>
+        <div class="meta-row" aria-label="Example collection summary">
+          <span class="pill">10 interactive examples</span>
+          <span class="pill">Static GitHub Pages hosting</span>
+          <span class="pill">Large maps served in-place</span>
+        </div>
+      </section>
+
+      <div class="section-heading">
+        <h2>Hosted Map Collections</h2>
+        <p class="section-note">Folder-based maps with supporting data assets.</p>
+      </div>
+
+      <section class="examples" aria-label="Hosted map collections">
+        <a class="example-card accent-gold" href="arXiv/">
+          <span class="card-top">
+            <span class="type">arXiv</span>
+            <h3>ArXiv Data Map</h3>
+            <p class="description">
+              A broad map of arXiv papers arranged by topic and neighborhood.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open map</span>
+            <span class="card-link">arXiv/</span>
+          </span>
+        </a>
+
+        <a class="example-card accent-blue" href="arXiv_math/">
+          <span class="card-top">
+            <span class="type">arXiv math</span>
+            <h3>Math ArXiv Data Map</h3>
+            <p class="description">
+              A focused view of the mathematical landscape in arXiv.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open map</span>
+            <span class="card-link">arXiv_math/</span>
+          </span>
+        </a>
+
+        <a class="example-card accent-green" href="hackernews/">
+          <span class="card-top">
+            <span class="type">Hacker News</span>
+            <h3>Hackernews Data Map</h3>
+            <p class="description">
+              A map of Hacker News content and the topics that gather around it.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open map</span>
+            <span class="card-link">hackernews/</span>
+          </span>
+        </a>
+
+        <a class="example-card accent-rose" href="wikipedia/">
+          <span class="card-top">
+            <span class="type">Wikipedia</span>
+            <h3>Interactive Map of Wikipedia</h3>
+            <p class="description">
+              A large interactive map of Wikipedia with labels, search, and
+              table-of-contents navigation.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open map</span>
+            <span class="card-link">wikipedia/</span>
+          </span>
+        </a>
+
+        <a class="example-card accent-blue" href="wikipedia-fr/">
+          <span class="card-top">
+            <span class="type">Wikipedia FR</span>
+            <h3>Carte interactive de Wikipedia</h3>
+            <p class="description">
+              A French-language Wikipedia map using the same hosted data-map
+              pattern.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open map</span>
+            <span class="card-link">wikipedia-fr/</span>
+          </span>
+        </a>
+      </section>
+
+      <div class="section-heading">
+        <h2>Standalone Examples</h2>
+        <p class="section-note">Single HTML pages that can be opened directly.</p>
+      </div>
+
+      <section class="examples" aria-label="Standalone examples">
+        <a class="example-card accent-gold" href="ArXiv_data_map_example.html">
+          <span class="card-top">
+            <span class="type">Machine learning</span>
+            <h3>ArXiv Machine Learning Landscape</h3>
+            <p class="description">
+              A data map of papers from the machine learning section of arXiv.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open example</span>
+            <span class="card-link">ArXiv_data_map_example.html</span>
+          </span>
+        </a>
+
+        <a class="example-card accent-green" href="CORD19_data_map_example.html">
+          <span class="card-top">
+            <span class="type">CORD-19</span>
+            <h3>CORD-19 Data Map</h3>
+            <p class="description">
+              A literature map for the CORD-19 open research dataset.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open example</span>
+            <span class="card-link">CORD19_data_map_example.html</span>
+          </span>
+        </a>
+
+        <a class="example-card accent-blue" href="CORD19_customised_example.html">
+          <span class="card-top">
+            <span class="type">CORD-19</span>
+            <h3>CORD-19 Customised Example</h3>
+            <p class="description">
+              A styled variation of the CORD-19 map showing customisation
+              options.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open example</span>
+            <span class="card-link">CORD19_customised_example.html</span>
+          </span>
+        </a>
+
+        <a class="example-card accent-rose" href="Wikipedia_data_map_example.html">
+          <span class="card-top">
+            <span class="type">Wikipedia</span>
+            <h3>Map of Wikipedia</h3>
+            <p class="description">
+              A standalone Wikipedia example page from the collection.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open example</span>
+            <span class="card-link">Wikipedia_data_map_example.html</span>
+          </span>
+        </a>
+
+        <a class="example-card accent-gold" href="timc_research_impact_alt.html">
+          <span class="card-top">
+            <span class="type">Research impact</span>
+            <h3>Tutte Institute Research Impact</h3>
+            <p class="description">
+              A map that explores the research impact around the Tutte
+              Institute.
+            </p>
+          </span>
+          <span class="card-bottom">
+            <span class="open">Open example</span>
+            <span class="card-link">timc_research_impact_alt.html</span>
+          </span>
+        </a>
+      </section>
+
+      <p class="repo-footer">
+        These examples are hosted directly from this repository through GitHub
+        Pages. Source files and notebooks are available in the
+        <a href="https://github.com/lmcinnes/datamapplot_examples">GitHub repository</a>.
+      </p>
+    </main>
+
+    <script>
+      const canvas = document.getElementById("map-field");
+      const context = canvas.getContext("2d");
+
+      const clusters = [
+        { x: 0.2, y: 0.22, color: "216,188,117", count: 85, spread: 0.09 },
+        { x: 0.72, y: 0.24, color: "120,183,255", count: 70, spread: 0.1 },
+        { x: 0.34, y: 0.68, color: "120,214,179", count: 82, spread: 0.12 },
+        { x: 0.78, y: 0.72, color: "230,138,167", count: 64, spread: 0.1 },
+        { x: 0.52, y: 0.45, color: "246,241,232", count: 42, spread: 0.14 },
+      ];
+
+      let points = [];
+
+      function random(seed) {
+        const x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+      }
+
+      function rebuildPoints() {
+        points = [];
+        let seed = 12;
+
+        clusters.forEach((cluster) => {
+          for (let i = 0; i < cluster.count; i += 1) {
+            seed += 1;
+            const angle = random(seed) * Math.PI * 2;
+            seed += 1;
+            const radius = Math.pow(random(seed), 0.55) * cluster.spread;
+            seed += 1;
+            const drift = random(seed) * 0.018;
+
+            points.push({
+              x: cluster.x + Math.cos(angle) * radius + drift,
+              y: cluster.y + Math.sin(angle) * radius - drift,
+              color: cluster.color,
+              size: 1 + random(seed + 3) * 2.4,
+              alpha: 0.25 + random(seed + 5) * 0.55,
+            });
+          }
+        });
+      }
+
+      function draw() {
+        const ratio = window.devicePixelRatio || 1;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        canvas.width = Math.floor(width * ratio);
+        canvas.height = Math.floor(height * ratio);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = "#050505";
+        context.fillRect(0, 0, width, height);
+
+        const vignette = context.createRadialGradient(
+          width * 0.5,
+          height * 0.45,
+          0,
+          width * 0.5,
+          height * 0.45,
+          Math.max(width, height) * 0.78,
+        );
+        vignette.addColorStop(0, "#111111");
+        vignette.addColorStop(1, "#050505");
+        context.fillStyle = vignette;
+        context.fillRect(0, 0, width, height);
+
+        points.forEach((point) => {
+          const x = point.x * width;
+          const y = point.y * height;
+          const size = point.size;
+
+          context.beginPath();
+          context.fillStyle = `rgba(${point.color},${point.alpha})`;
+          context.arc(x, y, size, 0, Math.PI * 2);
+          context.fill();
+        });
+
+        context.globalAlpha = 0.22;
+        context.strokeStyle = "#f6f1e8";
+        context.lineWidth = 1;
+        for (let i = 0; i < points.length; i += 9) {
+          const a = points[i];
+          const b = points[(i + 17) % points.length];
+          context.beginPath();
+          context.moveTo(a.x * width, a.y * height);
+          context.lineTo(b.x * width, b.y * height);
+          context.stroke();
+        }
+        context.globalAlpha = 1;
+      }
+
+      rebuildPoints();
+      draw();
+      window.addEventListener("resize", draw);
+    </script>
+  </body>
+</html>
